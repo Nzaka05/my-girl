@@ -832,7 +832,38 @@
         window.addEventListener('DOMContentLoaded', () => {
             // Initialize the first song
             loadSong(0);
+
+            // Auto-play music when page loads
+            function attemptPlayMusic() {
+                bgMusic.play().catch(error => {
+                    console.log('Autoplay prevented. User interaction required.');
+                });
+            }
             
+            // Try to play music automatically
+            attemptPlayMusic();
+            
+            // Make sure music starts playing as soon as possible
+            window.addEventListener('click', attemptPlayMusic, { once: true });
+            window.addEventListener('touchstart', attemptPlayMusic, { once: true });
+            
+            // Try again to start music after a short delay
+            setTimeout(attemptPlayMusic, 1000);
+            
+            // Backup: Play music when heart is clicked
+            const heartButton = document.querySelector('.heartbeat'); // Ensure this selector matches your heart element
+            heartButton.addEventListener('click', function() {
+                if (bgMusic.paused) {
+                    bgMusic.play();
+                    heartButton.classList.add('text-red-600');
+                    heartButton.classList.remove('text-gray-400');
+                } else {
+                    bgMusic.pause();
+                    heartButton.classList.remove('text-red-600');
+                    heartButton.classList.add('text-gray-400');
+                }
+            });
+
             // Event listeners for the music player
             playBtn.addEventListener('click', togglePlay);
             prevBtn.addEventListener('click', prevSong);
